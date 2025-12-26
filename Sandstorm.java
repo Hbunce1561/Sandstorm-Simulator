@@ -3,13 +3,13 @@ import java.net.http.*;
 import java.net.URI;
 
 public class Sandstorm {
-    private double gold;
-    private double ecto;
-    private double LD;
-    private double ectoPrice; 
+    private float gold;
+    private float ecto;
+    private float LD;
+    private float ectoPrice; 
     private HashMap<String, dropRolls> dropTable;
     private HashMap<String, Integer> vOf;
-    private HashMap<String, Double> wallet;
+    private HashMap<String, Float> wallet;
     private dropRolls LuckyDR;
     private dropRolls MassiveExotDR;
     private dropRolls MassiveAscDR;
@@ -17,15 +17,17 @@ public class Sandstorm {
     private dropRolls DragonDR;
     private dropRolls PriestessDR;
     private dropRolls PyramidDR;
-    private double cost[];
+    private float cost[];
     static int lengthArr = 7;
     private Random rand;
+    private Scanner sc;
     private int dropOccurance[];
     public Sandstorm() {
         this.rand = new Random();
         this.dropOccurance = new int[lengthArr];
         this.wallet = new HashMap<>();
-        this.cost = new double[2];
+        this.cost = new float[2];
+        this.sc = new Scanner(System.in);
         setEctoPrice();
         loadWallet();
         this.dropTable = new HashMap<>();
@@ -33,7 +35,7 @@ public class Sandstorm {
         this.vOf = new HashMap<>();
         loadValue();
         clDrop();
-        this.gold = 0.0;
+        this.gold = 0;
         this.ecto = 0;
         this.LD = 0;
 
@@ -66,13 +68,13 @@ public class Sandstorm {
         this.ecto += this.dropOccurance[3] * this.vOf.get("Glob of Ectoplasm");
         this.gold += this.dropOccurance[4] * this.vOf.get("Dragon Card");
         this.gold += this.dropOccurance[5] * this.vOf.get("Priestess Card");
-        double Pyrgold = this.dropOccurance[6] * this.vOf.get("Pyramid Card");
+        float Pyrgold = this.dropOccurance[6] * this.vOf.get("Pyramid Card");
         Pyrgold /=10;
         this.gold += Pyrgold;
         this.wallet.put("gold", this.wallet.get("gold") + gold);
         this.wallet.put("ecto", this.wallet.get("ecto") + ecto);
         this.wallet.put("lucky", this.wallet.get("lucky") + LD);
-        double ectoVal = this.ectoPrice * this.wallet.get("ecto"); 
+        float ectoVal = this.ectoPrice * this.wallet.get("ecto"); 
         this.wallet.put("effectiveG", this.wallet.get("gold") + ectoVal);
         System.out.println("Roll Totals"
                 + "\nGold: " + this.gold
@@ -128,10 +130,10 @@ public class Sandstorm {
         }
     }
     private void loadWallet() {
-        this.wallet.put("gold", 0.0);
-        this.wallet.put("ecto", 0.0);
-        this.wallet.put("lucky", 0.0);
-        this.wallet.put("effectiveG", 0.0);
+        this.wallet.put("gold", Float.parseFloat("0"));
+        this.wallet.put("ecto", Float.parseFloat("0"));
+        this.wallet.put("lucky", Float.parseFloat("0"));
+        this.wallet.put("effectiveG", Float.parseFloat("0"));
     }
 
     private void loadFlushDT() {
@@ -220,14 +222,51 @@ public class Sandstorm {
     String s = response.body();
     String[] arr = s.split(",");
     String[] arr2 = arr[1].split("]]");
-    ectoPrice = Double.parseDouble(arr2[0])/10000;
+    ectoPrice = Float.parseFloat(arr2[0])/10000;
     System.out.println("Current price of Ecto: "+ectoPrice);
     }catch(Exception exception){
         System.out.println(exception);
         System.out.println("Unable to set live Ecto price, setting price to .2 G");
-        this.ectoPrice = .2;
+        this.ectoPrice = Float.parseFloat("0.2");
         return;
     }
     }
+    public void start(){
+         while(true){
+            System.out.println("Would you like to play?"
+                +"\n(Y)es / (N)o / (W)e Ball");
+            switch (this.sc.nextLine()) {
+                case "y", "Y":
+                    System.out.println("(T)rump / (M)eld / (F)lush?"
+                        +"\n5 Ecto, .4 G / 50 Ecto, 4 G / 250 Ecto, 100 G");
+                    switch (this.sc.nextLine()) {
+                        case "T", "t":
+                            play(1,1);
+                            break;
+                        case "M", "m":
+                            play(1,0);
+                            break;
+                        case "F", "f":
+                            play(1, 2);
+                            break;
+                        default:
+                            System.out.println("Invalid input");
+                            break;
+                    }
+                    break;
+                case "w", "W":
+                    play(100, 2);
+                    break;
+                case "n", "N":
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid input");
+                    break;
+            }
+        }
+
+    }
+   
+      
 
 }
