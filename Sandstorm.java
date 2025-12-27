@@ -151,8 +151,8 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= 100;
-        this.cost[1] = 250;
+        this.cost[0]= Float.parseFloat("100");
+        this.cost[1] = Float.parseFloat("250");
     }
         private void loadMeldDT() {
         this.LuckyDR = new dropRolls(49, 1);
@@ -169,8 +169,8 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= 4;
-        this.cost[1] = 50;
+        this.cost[0]= Float.parseFloat("4");
+        this.cost[1] = Float.parseFloat("50");
     }
         private void loadTrumpDT() {
         this.LuckyDR = new dropRolls(-1, 1);
@@ -187,8 +187,8 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= .4;
-        this.cost[1] = 5;
+        this.cost[0]= Float.parseFloat(".4");
+        this.cost[1] = Float.parseFloat("5");
     }
 
     private void loadValue() {
