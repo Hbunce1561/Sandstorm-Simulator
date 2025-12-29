@@ -18,13 +18,10 @@ public class Sandstorm {
     private dropRolls PriestessDR;
     private dropRolls PyramidDR;
     private float cost[];
-    static int lengthArr = 7;
     private Random rand;
     private Scanner sc;
-    private int dropOccurance[];
     public Sandstorm() {
         this.rand = new Random();
-        this.dropOccurance = new int[lengthArr];
         this.wallet = new HashMap<>();
         this.cost = new float[2];
         this.sc = new Scanner(System.in);
@@ -32,43 +29,38 @@ public class Sandstorm {
         loadWallet();
         this.dropTable = new HashMap<>();
         loadFlushDT();
-        clDrop();
         this.gold = 0;
         this.ecto = 0;
         this.LD = 0;
 
     }
 
-    public void roll() {
-        this.wallet.put("gold", this.wallet.get("gold") - this.cost[0]);
-        this.wallet.put("ecto", this.wallet.get("ecto") - this.cost[1]);
-        this.dropOccurance[0] += rollAssistant(this.dropTable.get("Lucky Draw").getDropRate(),
-                this.dropTable.get("Lucky Draw").getRolls());
-        this.dropOccurance[1] += rollAssistant(this.dropTable.get("Massive Glob of Ectoplasm (Exotic)").getDropRate(),
-                this.dropTable.get("Massive Glob of Ectoplasm (Exotic)").getRolls());
-        this.dropOccurance[2] += rollAssistant(this.dropTable.get("Massive Glob of Ectoplasm (Ascended)").getDropRate(),
-                this.dropTable.get("Massive Glob of Ectoplasm (Ascended)").getRolls());
-        this.dropOccurance[3] += rollAssistant(this.dropTable.get("Glob of Ectoplasm").getDropRate(),
-                this.dropTable.get("Glob of Ectoplasm").getRolls());
-        this.dropOccurance[4] += rollAssistant(this.dropTable.get("Dragon Card").getDropRate(),
-                this.dropTable.get("Dragon Card").getRolls());
-        this.dropOccurance[5] += rollAssistant(this.dropTable.get("Priestess Card").getDropRate(),
-                this.dropTable.get("Priestess Card").getRolls());
-        this.dropOccurance[6] += rollAssistant(this.dropTable.get("Pyramid Card").getDropRate(),
-                this.dropTable.get("Pyramid Card").getRolls());
-
+    public void roll(dropRolls currentRoll) {
+        for (int i = 0; i < currentRoll.getRolls(); i++)
+        {
+            if(this.rand.nextInt(10000) < currentRoll.getDropRate()){
+                currentRoll.addCount();
+            }
+        }
     }
 
     public void calculate() {
-        this.LD += this.dropOccurance[0] * this.LuckyDR.getValue();
-        this.ecto += this.dropOccurance[1] * this.MassiveExotDR.getValue();
-        this.ecto += this.dropOccurance[2] * this.MassiveAscDR.getValue();
-        this.ecto += this.dropOccurance[3] * this.GlobDR.getValue();
-        this.gold += this.dropOccurance[4] * this.DragonDR.getValue();
-        this.gold += this.dropOccurance[5] * this.PriestessDR.getValue();
-        float Pyrgold = this.dropOccurance[6] * this.PyramidDR.getValue();
+        this.LD += this.LuckyDR.getCount() * this.LuckyDR.getValue();
+        this.LuckyDR.clCount();
+        this.ecto += this.MassiveExotDR.getCount() * this.MassiveExotDR.getValue();
+        this.MassiveExotDR.clCount();
+        this.ecto += this.MassiveAscDR.getCount() * this.MassiveAscDR.getValue();
+        this.MassiveAscDR.clCount();
+        this.ecto += this.GlobDR.getCount() * this.GlobDR.getValue();
+        this.GlobDR.clCount();
+        this.gold += this.DragonDR.getCount() * this.DragonDR.getValue();
+        this.DragonDR.clCount();
+        this.gold += this.PriestessDR.getCount() * this.PriestessDR.getValue();
+        this.PriestessDR.clCount();
+        float Pyrgold = this.PyramidDR.getCount() * this.PyramidDR.getValue();
         Pyrgold /=10;
         this.gold += Pyrgold;
+        this.PyramidDR.clCount();
         this.wallet.put("gold", this.wallet.get("gold") + gold);
         this.wallet.put("ecto", this.wallet.get("ecto") + ecto);
         this.wallet.put("lucky", this.wallet.get("lucky") + LD);
@@ -81,17 +73,12 @@ public class Sandstorm {
         this.gold = 0;
         this.LD = 0;
         this.ecto = 0;
-        clDrop();
     }
 
     public void printResult() {
-        System.out.println(this.dropOccurance[0] + " Lucky Draw\n"
-                + this.dropOccurance[1] + " Massive Glob of Ectoplasm (Exotic)\n"
-                + this.dropOccurance[2] + " Massive Glob of Ectoplasm (Ascended)\n"
-                + this.dropOccurance[3] + " Glob of Ectoplasm\n"
-                + this.dropOccurance[4] + " Dragon Card\n"
-                + this.dropOccurance[5] + " Priestess Card\n"
-                + this.dropOccurance[6] + " Pyramid Card\n");
+         for (Map.Entry<String, dropRolls> entry : dropTable.entrySet()) {
+        System.out.println(entry.getValue().getCount() + " " + entry.getKey());
+    }
     }
 
     public void printProfit() {
@@ -114,24 +101,24 @@ public class Sandstorm {
                 loadFlushDT();
                 break;
         }
+        
         for (int j = 0; j < i; j++) {
-            roll();
+            this.wallet.put("gold", this.wallet.get("gold") - this.cost[0]);
+            this.wallet.put("ecto", this.wallet.get("ecto") - this.cost[1]);
+            for (dropRolls dr : dropTable.values()){
+                roll(dr);
+            }
         }
         printResult();
         calculate();
         printProfit();
 
     }
-    private void clDrop(){
-        for(int i = 0; i < dropOccurance.length; i++){
-            this.dropOccurance[i] = 0;
-        }
-    }
     private void loadWallet() {
-        this.wallet.put("gold", Float.parseFloat("0"));
-        this.wallet.put("ecto", Float.parseFloat("0"));
-        this.wallet.put("lucky", Float.parseFloat("0"));
-        this.wallet.put("effectiveG", Float.parseFloat("0"));
+        this.wallet.put("gold", 0f);
+        this.wallet.put("ecto", 0f);
+        this.wallet.put("lucky", 0f);
+        this.wallet.put("effectiveG", 0f);
     }
 
     private void loadFlushDT() {
@@ -149,8 +136,8 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= Float.parseFloat("100");
-        this.cost[1] = Float.parseFloat("250");
+        this.cost[0]= 100f;
+        this.cost[1] = 250f;
     }
         private void loadMeldDT() {
         this.LuckyDR = new dropRolls(49, 1, 1);
@@ -167,8 +154,8 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= Float.parseFloat("4");
-        this.cost[1] = Float.parseFloat("50");
+        this.cost[0]= 4f;
+        this.cost[1] = 50f;
     }
         private void loadTrumpDT() {
         this.LuckyDR = new dropRolls(-1, 1, 1);
@@ -185,20 +172,10 @@ public class Sandstorm {
         this.dropTable.put("Dragon Card", this.DragonDR);
         this.dropTable.put("Priestess Card", this.PriestessDR);
         this.dropTable.put("Pyramid Card", this.PyramidDR);
-        this.cost[0]= Float.parseFloat(".4");
-        this.cost[1] = Float.parseFloat("5");
+        this.cost[0]= .4f;
+        this.cost[1] = 5f;
     }
 
-    private int rollAssistant(int d, int r) {
-        int drop = 0;
-        for (int i = 0; i < r; i++) {
-            int temp = this.rand.nextInt(10000);
-            if (temp <= d) {
-                drop++;
-            }
-        }
-        return drop;
-    }
     private void setEctoPrice() {
     HttpClient client;
     HttpRequest request;
@@ -215,7 +192,7 @@ public class Sandstorm {
     }catch(Exception exception){
         System.out.println(exception);
         System.out.println("Unable to set live Ecto price, setting price to .2 G");
-        this.ectoPrice = Float.parseFloat("0.2");
+        this.ectoPrice = .2f;
         return;
     }
     }
