@@ -2,13 +2,13 @@ import java.util.*;
 import java.net.http.*;
 import java.net.URI;
 
+
 public class Sandstorm {
     private float gold;
     private float ecto;
     private float LD;
     private float ectoPrice; 
     private HashMap<String, dropRolls> dropTable;
-    private HashMap<String, Integer> vOf;
     private HashMap<String, Float> wallet;
     private dropRolls LuckyDR;
     private dropRolls MassiveExotDR;
@@ -32,8 +32,6 @@ public class Sandstorm {
         loadWallet();
         this.dropTable = new HashMap<>();
         loadFlushDT();
-        this.vOf = new HashMap<>();
-        loadValue();
         clDrop();
         this.gold = 0;
         this.ecto = 0;
@@ -62,13 +60,13 @@ public class Sandstorm {
     }
 
     public void calculate() {
-        this.LD += this.dropOccurance[0] * this.vOf.get("Lucky Draw");
-        this.ecto += this.dropOccurance[1] * this.vOf.get("Massive Glob of Ectoplasm (Exotic)");
-        this.ecto += this.dropOccurance[2] * this.vOf.get("Massive Glob of Ectoplasm (Ascended)");
-        this.ecto += this.dropOccurance[3] * this.vOf.get("Glob of Ectoplasm");
-        this.gold += this.dropOccurance[4] * this.vOf.get("Dragon Card");
-        this.gold += this.dropOccurance[5] * this.vOf.get("Priestess Card");
-        float Pyrgold = this.dropOccurance[6] * this.vOf.get("Pyramid Card");
+        this.LD += this.dropOccurance[0] * this.LuckyDR.getValue();
+        this.ecto += this.dropOccurance[1] * this.MassiveExotDR.getValue();
+        this.ecto += this.dropOccurance[2] * this.MassiveAscDR.getValue();
+        this.ecto += this.dropOccurance[3] * this.GlobDR.getValue();
+        this.gold += this.dropOccurance[4] * this.DragonDR.getValue();
+        this.gold += this.dropOccurance[5] * this.PriestessDR.getValue();
+        float Pyrgold = this.dropOccurance[6] * this.PyramidDR.getValue();
         Pyrgold /=10;
         this.gold += Pyrgold;
         this.wallet.put("gold", this.wallet.get("gold") + gold);
@@ -137,13 +135,13 @@ public class Sandstorm {
     }
 
     private void loadFlushDT() {
-        this.LuckyDR = new dropRolls(1600, 1);
-        this.MassiveExotDR = new dropRolls(5450, 8);
-        this.MassiveAscDR = new dropRolls(300, 1);
-        this.GlobDR = new dropRolls(5470, 30);
-        this.DragonDR = new dropRolls(8284, 100);
-        this.PriestessDR = new dropRolls(1400, 1);
-        this.PyramidDR = new dropRolls(-1,1);
+        this.LuckyDR = new dropRolls(1600, 1, 1);
+        this.MassiveExotDR = new dropRolls(5450, 8, 50);
+        this.MassiveAscDR = new dropRolls(300, 1, 500);
+        this.GlobDR = new dropRolls(5470, 30, 1);
+        this.DragonDR = new dropRolls(8284, 100, 1);
+        this.PriestessDR = new dropRolls(1400, 1, 100);
+        this.PyramidDR = new dropRolls(-1,1, 1);
         this.dropTable.put("Lucky Draw", this.LuckyDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Exotic)", this.MassiveExotDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Ascended)", this.MassiveAscDR);
@@ -155,13 +153,13 @@ public class Sandstorm {
         this.cost[1] = Float.parseFloat("250");
     }
         private void loadMeldDT() {
-        this.LuckyDR = new dropRolls(49, 1);
-        this.MassiveExotDR = new dropRolls(500, 1);
-        this.MassiveAscDR = new dropRolls(-1, 1);
-        this.GlobDR = new dropRolls(4718, 100);
-        this.DragonDR = new dropRolls(374, 100);
-        this.PriestessDR = new dropRolls(-1,1);
-        this.PyramidDR = new dropRolls(-1,1);
+        this.LuckyDR = new dropRolls(49, 1, 1);
+        this.MassiveExotDR = new dropRolls(500, 1, 50);
+        this.MassiveAscDR = new dropRolls(-1, 1, 500);
+        this.GlobDR = new dropRolls(4718, 100, 1);
+        this.DragonDR = new dropRolls(374, 100, 1);
+        this.PriestessDR = new dropRolls(-1,1,100);
+        this.PyramidDR = new dropRolls(-1,1, 1);
         this.dropTable.put("Lucky Draw", this.LuckyDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Exotic)", this.MassiveExotDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Ascended)", this.MassiveAscDR);
@@ -173,13 +171,13 @@ public class Sandstorm {
         this.cost[1] = Float.parseFloat("50");
     }
         private void loadTrumpDT() {
-        this.LuckyDR = new dropRolls(-1, 1);
-        this.MassiveExotDR = new dropRolls(-1, 1);
-        this.MassiveAscDR = new dropRolls(-1, 1);
-        this.GlobDR = new dropRolls(4814, 10);
-        this.DragonDR = new dropRolls(953, 1);
-        this.PriestessDR = new dropRolls(-1, 1);
-        this.PyramidDR = new dropRolls(2548,10);
+        this.LuckyDR = new dropRolls(-1, 1, 1);
+        this.MassiveExotDR = new dropRolls(-1, 1, 50);
+        this.MassiveAscDR = new dropRolls(-1, 1, 500);
+        this.GlobDR = new dropRolls(4814, 10, 1);
+        this.DragonDR = new dropRolls(953, 1, 1);
+        this.PriestessDR = new dropRolls(-1, 1, 100);
+        this.PyramidDR = new dropRolls(2548,10, 1);
         this.dropTable.put("Lucky Draw", this.LuckyDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Exotic)", this.MassiveExotDR);
         this.dropTable.put("Massive Glob of Ectoplasm (Ascended)", this.MassiveAscDR);
@@ -189,16 +187,6 @@ public class Sandstorm {
         this.dropTable.put("Pyramid Card", this.PyramidDR);
         this.cost[0]= Float.parseFloat(".4");
         this.cost[1] = Float.parseFloat("5");
-    }
-
-    private void loadValue() {
-        this.vOf.put("Lucky Draw", 1);
-        this.vOf.put("Massive Glob of Ectoplasm (Exotic)", 50);
-        this.vOf.put("Massive Glob of Ectoplasm (Ascended)", 500);
-        this.vOf.put("Glob of Ectoplasm", 1);
-        this.vOf.put("Dragon Card", 1);
-        this.vOf.put("Priestess Card", 100);
-        this.vOf.put("Pyramid Card", 1);
     }
 
     private int rollAssistant(int d, int r) {
